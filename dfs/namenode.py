@@ -1,4 +1,4 @@
-import os, json
+import os, json, hashlib
 from math import pow, ceil
 from collections import OrderedDict
 class Namenode:
@@ -13,16 +13,6 @@ class Namenode:
                 os.makedirs(self.root)
             except OSError as exception:
                 print "Run the script as root"
-    
-    #filename => array of blocks
-    def get(self, file_id, timestamp):
-        filename = str(file_id) + "@" + str(timestamp)
-        absPath = os.path.join(self.root, filename)
-        arr = None
-        with open(absPath, 'r') as f:
-            list_datanodes = f.read()
-            print json.loads(list_datanodes)
-            return list_datanodes
 
     #choose the datanodes with least number of blocks
     def getNewDN(self, numBlocks):
@@ -40,11 +30,23 @@ class Namenode:
     def updateDN(self, dnodes):
         for node in dnodes:
             self.datanodes[node] += 1
+
+    #filename => array of blocks
+    def get(self, file_path, timestamp):
+        pathHash = hashlib.sha1(file_path).hexdigest()
+        filename = pathHash + "@" + str(timestamp)
+        absPath = os.path.join(self.root, filename)
+        arr = None
+        with open(absPath, 'r') as f:
+            list_datanodes = f.read()
+            print json.loads(list_datanodes)
+            return list_datanodes
     
     #filename, filesize => 
-    def save(self, file_id, file_size, timestamp):
+    def save(self, file_path, file_size, timestamp):
         numBlocks = int(ceil(float(file_size)/self.blocksize))
-        filename = str(file_id) + "@" + str(timestamp)
+        pathHash = hashlib.sha1(file_path).hexdigest()
+        filename = pathHash + "@" + str(timestamp)
         absPath = os.path.join(self.root, filename)
         with open(absPath, 'w') as f:
             list_ports = self.getNewDN(numBlocks)
