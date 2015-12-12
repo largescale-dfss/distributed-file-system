@@ -23,9 +23,11 @@ class Namenode:
             list_datanodes = f.read()
             print json.loads(list_datanodes)
             return list_datanodes
+            #list_ports = pickle.load(f)
+            #print list_ports
 
-    #choose the datanodes with least number of blocks
     def getNewDN(self, numBlocks):
+        #choose the datanodes with least number of blocks
         dnodes = []
         od = OrderedDict(sorted(self.datanodes.items()), key=lambda t: t[1])
         keys = od.keys()
