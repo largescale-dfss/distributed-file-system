@@ -39,7 +39,7 @@ class Namenode:
         arr = None
         with open(absPath, 'r') as f:
             list_datanodes = f.read()
-            print list_datanodes
+            print json.loads(list_datanodes)
             return list_datanodes
     
     #filename, filesize => 
@@ -51,4 +51,7 @@ class Namenode:
         with open(absPath, 'w') as f:
             list_ports = self.getNewDN(numBlocks)
             f.write(json.dumps(list_ports))
+            print "ok"
+            print list_ports
+            return list_ports
 

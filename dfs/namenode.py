@@ -51,4 +51,5 @@ class Namenode:
         with open(absPath, 'w') as f:
             list_ports = self.getNewDN(numBlocks)
             f.write(json.dumps(list_ports))
+            return list_ports
 

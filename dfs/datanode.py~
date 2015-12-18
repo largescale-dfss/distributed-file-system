@@ -23,7 +23,7 @@ class Datanode:
         filename = self.get_filename(file_hash, timestamp)
         file_path = os.path.join(folder_path, filename)
         with open(file_path, 'r') as f:
-            return f.read()
+            print f.read()
 
     def write(self, file_hash, timestamp, data):
         folder_path = self.get_dir(file_hash)
