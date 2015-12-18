@@ -4,7 +4,6 @@
 
 import time
 import namenode_pb2
-import dfss
 from grpc.beta import implementations
 import sys 
 from namenode import Namenode
@@ -13,7 +12,7 @@ from namenode import Namenode
 TIMEOUT = 10
 DEBUG = True
 
-class NameNode(namenode_pb2.BetaDataNodeServicer):
+class NameNode(namenode_pb2.BetaNameNodeServicer):
     
     def Store(self,request,context):
         """
@@ -32,7 +31,7 @@ class NameNode(namenode_pb2.BetaDataNodeServicer):
         data_nodes = nn.save(request.file_path,request.file_size,request.timestamp)
          
 
-        return namenode_pb2.StoreReply(path=request.file_path,datanodes=data_nodes,nn.blocksize,success=True)
+        return namenode_pb2.StoreReply(path=request.file_path,datanodes=data_nodes,block_size=nn.blocksize,success=True)
 
     def Read(self,request,context):
         """Reads a file from data node. This should simply call
@@ -79,13 +78,13 @@ def main():
     port = sys.argv[1]
 
     print("\n\tStarting server on localhost:"+port)
-    server = data_pb2.beta_create_NameNode_server(NameNode())
+    server = namenode_pb2.beta_create_NameNode_server(NameNode())
     ip = "[::]:"+str(port)
     server.add_insecure_port(ip)
     server.start()
     try:
         while True:
-            time.sleep(commonlib.TIMEOUT)
+            time.sleep(TIMEOUT)
     except KeyboardInterrupt:
         print("\n\tKilling the server...\n")
         server.stop(grace=0)
